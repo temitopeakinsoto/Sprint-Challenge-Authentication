@@ -2,20 +2,22 @@ const router = require('express').Router();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const Users = require('./helpers');
+
+const mw = require('./middlewares');
 const secret = process.env.JWT_SECRET;
 
-router.post('/register', (req, res) => {
-  const { username, password } = req.body;
+router.post('/register', mw.validateNewUser, (req, res) => {
+  const { username, password } = req.user;
   const hash = bcrypt.hashSync(password, 10);  
 
-  const user = {
+  const userTobeRegistered = {
     username, 
     password: hash
   }
 
-  Users.add(user)
-  .then(saved => {
-    res.status(201).json(saved)
+  Users.add(userTobeRegistered)
+  .then(savedUser => {
+    res.status(201).json(savedUser)
   })
   .catch(err => {
     res.status(500).json({message: "There was an error while trying to register this user: " + err.message})
