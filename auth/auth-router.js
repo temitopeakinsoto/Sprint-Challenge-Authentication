@@ -5,13 +5,19 @@ const Users = require('./helpers');
 
 router.post('/register', (req, res) => {
   const { username, password } = req.body;
-  const user = {username, password}
+  const hash = bcrypt.hashSync(password, 10);  
+
+  const user = {
+    username, 
+    password: hash
+  }
+
   Users.add(user)
   .then(saved => {
-    res.status(201).json({message: "it worked!"})
+    res.status(201).json(saved)
   })
   .catch(err => {
-    res.status(500).json({message: "It did not work!" + err.message})
+    res.status(500).json({message: "There was an error while trying to register this user: " + err.message})
   })
 });
 
