@@ -20,7 +20,7 @@ function remove(id) {
 
 function findById(id) {
   return db("users")
-    .select("id", "username", "department")
+    .select("id", "username")
     .where({ id })
     .first();
 }
